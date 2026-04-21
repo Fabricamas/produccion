@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Producción Fabricamas</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #f0f2f5; color: #1c1e21; }
+        .sticky-header { position: sticky; top: 0; z-index: 1000; background: white; padding: 10px 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); border-bottom: 3px solid #003366; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .header h2 { margin: 0; color: #003366; font-size: 1.5em; text-transform: uppercase; }
+        .logo-container { display: flex; gap: 2px; }
+        .logo-letra { background-color: #f39c12; color: white; width: 26px; height: 26px; display: flex; justify-content: center; align-items: center; font-weight: bold; border-radius: 3px; font-size: 15px; }
+        .date-section { display: flex; align-items: center; gap: 15px; background: #e9ecef; padding: 10px; border-radius: 8px; }
+        .grid-headers { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 8px; }
+        .cat-label { text-align: center; padding: 6px; color: white; font-weight: bold; text-transform: uppercase; font-size: 0.85em; border-radius: 4px; }
+        .container { max-width: 1250px; margin: 10px auto; padding: 0 15px 120px 15px; }
+        .grid-produccion { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        .col-categoria { background: white; border: 1px solid #ccc; border-radius: 4px; }
+        .row { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; border-bottom: 1px solid rgba(0,0,0,0.08); }
+        .row-resp-MAY { background: linear-gradient(to bottom, #ffffff, #ff9800); } 
+        .row-resp-min { background: linear-gradient(to bottom, #ffffff, #ffe0b2); } 
+        .row-parr { background: linear-gradient(to bottom, #ffffff, #42a5f5); } 
+        .row-esca { background: linear-gradient(to bottom, #ffffff, #66bb6a); } 
+        .row span { flex: 1; font-weight: 600; font-size: 0.85em; color: #000; }
+        .row input { width: 55px; padding: 8px; border: 1px solid #666; border-radius: 4px; font-weight: bold; text-align: center; }
+        .obs-box { width: 92%; margin: 4px auto; padding: 6px; display: none; border: 1px solid #999; border-radius: 4px; background: white; }
+        button { padding: 12px; cursor: pointer; border: none; border-radius: 8px; font-weight: bold; }
+        #btnMain { width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.3); background-color: #003366; color: white; }
+        .btn-confirm { background-color: #003366 !important; color: white !important; }
+        .btn-modificar { background-color: #e67e22 !important; color: white !important; }
+        .btn-admin { background-color: #6c757d; color: white; margin: 40px auto; display: block; width: 250px; }
+        #panelAdmin { display: none; border: 2px solid #1d6f42; padding: 20px; margin: 20px auto; background: #f4fcf7; border-radius: 10px; max-width: 500px; text-align: center; }
+        .locked { background-color: #e9ecef !important; pointer-events: none !important; opacity: 0.6; }
+        #customModal { display: none; position: fixed; z-index: 5000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }
+        .modal-content { background: white; margin: 15% auto; padding: 30px; width: 85%; max-width: 450px; border-radius: 15px; text-align: center; }
+        .modal-btns { display: flex; gap: 10px; justify-content: center; margin-top: 25px; }
+        #fechaProd { pointer-events: auto !important; cursor: pointer !important; }
+        #loginAdmin { display: none; position: fixed; z-index: 6000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
+        .resumen-lista { text-align: left; background: #f8f9fa; padding: 10px; border-radius: 8px; margin: 15px 0; max-height: 200px; overflow-y: auto; font-size: 0.9em; border: 1px solid #ddd; }
+        .area-backup { width: 90%; height: 60px; font-size: 10px; margin: 10px 0; background: #eee; border: 1px solid #ccc; color: #555; }
+    </style>
+</head>
+<body>
+
+<div class="sticky-header">
+    <div class="header">
+        <h2>Producción</h2>
+        <div class="logo-container"><div class="logo-letra">F</div><div class="logo-letra">A</div><div class="logo-letra">B</div><div class="logo-letra">R</div><div class="logo-letra">I</div><div class="logo-letra">C</div><div class="logo-letra">A</div><div class="logo-letra">M</div><div class="logo-letra">A</div><div class="logo-letra">S</div></div>
+    </div>
+    <div class="date-section">
+        <div style="flex: 1;">
+            <label style="font-size:0.8em;"><strong>Fecha:</strong></label><br>
+            <input type="date" id="fechaProd" style="padding: 5px; font-weight: bold;">
+            <div id="tags" style="font-size: 0.7em; margin-top:5px; color:#28a745;"></div>
+        </div>
+        <div style="flex: 1.5;">
+            <button id="btnMain" onclick="abrirPop()">CONFIRMAR PRODUCCIÓN</button>
+        </div>
+    </div>
+    <div class="grid-headers">
+        <div class="cat-label" style="background:#e67e22;">Respaldos</div>
+        <div class="cat-label" style="background:#2980b9;">Parrillas</div>
+        <div class="cat-label" style="background:#27ae60;">Escaleras</div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="grid-produccion">
+        <div class="col-categoria" id="col-resp"></div>
+        <div class="col-categoria" id="col-parr"></div>
+        <div class="col-categoria" id="col-esca"></div>
+    </div>
+    <button class="btn-admin" onclick="mostrarLoginAdmin()">Panel Administrador</button>
+    
+    <div id="loginAdmin">
+        <div class="modal-content">
+            <h3>Acceso Administrador</h3>
+            <input type="password" id="passAdmin" placeholder="Ingrese clave" style="padding:10px; width:80%; margin-bottom:10px; font-size:1.2em; text-align:center;">
+            <div style="margin-bottom:20px;">
+                <input type="checkbox" id="verPass" onclick="togglePass()"> <label for="verPass">Ver clave</label>
+            </div>
+            <div class="modal-btns">
+                <button onclick="validarAcceso()" style="background:#1d6f42; color:white; padding:10px 20px;">ENTRAR</button>
+                <button onclick="cerrarLoginAdmin()" style="background:#6c757d; color:white; padding:10px 20px;">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="panelAdmin">
+        <h4>GESTIÓN ADMIN</h4>
+        <input type="month" id="mesSel" style="width: 90%; padding: 10px; margin-bottom: 10px;">
+        <button onclick="exportarExcelFinal()" style="background:#1d6f42; color:white; width:90%; margin-bottom:10px;">Exportar Excel</button>
+        <button onclick="borrarMes()" style="background:#d93025; color:white; width:90%; margin-bottom:10px;">Borrar Mes</button>
+        <hr>
+        <label style="font-size: 0.8em;">Copia de Seguridad:</label>
+        <textarea id="textoBackup" class="area-backup" readonly onclick="this.select(); document.execCommand('copy'); alert('¡Copiado!');"></textarea>
+        <button onclick="restaurarMes()" style="background:#5d4037; color:white; width:90%;">RESTAURAR MES DESDE BACKUP</button>
+        <hr>
+        <button onclick="cerrarAdmin()" style="background:#6c757d; color:white; width:90%; margin-top:10px;">Cerrar Panel</button>
+    </div>
+</div>
+
+<div id="customModal">
+    <div class="modal-content">
+        <p id="modalTxt" style="font-weight: bold; margin-bottom:5px;"></p>
+        <div id="resumenCarga" class="resumen-lista"></div>
+        <div id="modalBtns" class="modal-btns"></div>
+    </div>
+</div>
+
+<script>
+    // Bloqueo de navegación - el botón atrás no puede salir de esta página
+    history.pushState(null, null, location.href);
+    window.addEventListener('popstate', function() {
+        history.pushState(null, null, location.href);
+    });
+
+    const CLAVE = "1614";
+    const respItems = ["RESPALDOS 1P","Cabeceras 1P","Pieceras 1P","RESPALDOS 1½","Cabeceras 1½","Pieceras 1½","RESPALDOS 1,30","Cabeceras 1,30","Pieceras 1,30","RESPALDOS 2P","Cabeceras 2P","Pieceras 2P ","RESPALDOS S/P","RESPALDOS (3)","RESPALDOS S/P 1½","RESPALDOS DIVANCITO 0,40","RESPALDOS DIVAN ECO 0,60 ","RESPALDOS NIDO ECO 0,80","RESPALDOS OTOMANA 1P","RESPALDOS OTOMANA 1½","RESPALDOS OTOMANA 2P","RESPALDOS 1P GRIEGA","RESPALDOS NIDO GRIEGA","RESPALDOS DIVAN GRIEGA","RESPALDOS 2P GRIEGA","RESPALDOS S/P GRIEGA","RESPALDOS TABLITA 1P","RESPALDOS (1,60X2,00)","RESPALDOS (2,00X2,00)","MONTESSORI TIPI","MONTESSORI CASITA","MONTESSORI CASITA S/P","TATAMI","CAMASCOTA"];
+    const parrItems = ["PARRILLAS 1P (3)","PARRILLAS 1P (4)","PARRILLAS 1P (¾ X 3\")","PARRILLAS 1P (¾ X 4\")","PARRILLAS 1P 2m (¾ X 3\")","PARRILLAS 1P 2m (¾ X 4\")","PARRILLAS CARRITO (3)","PARRILLAS CARRITO (4)","PARRILLAS 1P 1 PULGADA (3)","PARRILLAS 1P 1 PULGADA (4)","PARRILLAS 1½ (3)","PARRILLAS 1½ (4)","PARRILLAS 1½ (¾ X 3\")","PARRILLAS 1½ (¾ X 4\")","PARRILLAS 1,30 (3)","PARRILLAS 1,30 (4)","PARRILLAS 2P (3)","PARRILLAS 2P (4)","PARRILLAS 2P (¾ X 3\")","PARRILLAS 2P (¾ X 4\")","PARRILLAS (1,60/2,00)","PARRILLAS (2,00/2,00)","PRACTICAMA","CAJON"];
+    const escaItems = ["ESCALERAS","ESCALERAS GRIEGAS","BARANDAS"];
+
+    const todos = [...respItems.map((n,i)=>({id:'r'+i, n, c:'resp', hex:'FFCC80'})), ...parrItems.map((n,i)=>({id:'p'+i, n, c:'parr', hex:'90CAF9'})), ...escaItems.map((n,i)=>({id:'e'+i, n, c:'esca', hex:'A5D6A7'}))];
+    
+    let db = JSON.parse(localStorage.getItem('fabricamas_v37')) || { datos: {}, fallos: [] };
+    let cambio = false, fAct = "", esAdmin = false;
+
+    function init() {
+        todos.forEach(a => {
+            let col = a.c === 'resp' ? 'col-resp' : (a.c === 'parr' ? 'col-parr' : 'col-esca');
+            let cls = `row-${a.c}`;
+            if(a.c==='resp') cls = (a.n === a.n.toUpperCase()) ? 'row-resp-MAY' : 'row-resp-min';
+            const div = document.createElement('div');
+            div.className = `row ${cls}`;
+            div.innerHTML = `<span>${a.n}</span><input type="number" id="v-${a.id}" placeholder="0" oninput="cambio=true"><button onclick="togg('${a.id}')" style="background:none;border:none;">💬</button><input type="text" class="obs-box" id="o-${a.id}" oninput="cambio=true">`;
+            document.getElementById(col).appendChild(div);
+        });
+        let d = new Date(); 
+        let day = d.getDay(); 
+        let r = (day === 1) ? 3 : (day === 0 ? 2 : 1);
+        d.setDate(d.getDate() - r); 
+        fAct = d.toISOString().split('T')[0];
+        document.getElementById('fechaProd').value = fAct;
+        cargar(); refrescarTags();
+        actualizarTextoBackup();
+    }
+
+    function esFinde(fechaStr) {
+        const d = new Date(fechaStr + "T12:00:00");
+        return d.getDay() === 0 || d.getDay() === 6;
+    }
+
+    function cargar() {
+        const f = document.getElementById('fechaProd').value;
+        const reg = db.datos[f];
+        const btn = document.getElementById('btnMain');
+        todos.forEach(a => {
+            document.getElementById(`v-${a.id}`).value = reg?.data[a.id]?.v || '';
+            document.getElementById(`o-${a.id}`).value = reg?.data[a.id]?.o || '';
+            document.getElementById(`o-${a.id}`).style.display = reg?.data[a.id]?.o ? 'block' : 'none';
+        });
+        if(esAdmin) {
+            btn.innerText = "CONFIRMAR CAMBIOS (ADMIN)"; btn.className = "btn-modificar"; btn.style.display = "block";
+            document.querySelectorAll('input, .obs-box').forEach(i => i.classList.remove('locked'));
+        } else {
+            if(reg?.lock) { btn.style.display="none"; document.querySelectorAll('input, .obs-box').forEach(i => i.classList.add('locked')); }
+            else { btn.innerText = "CONFIRMAR PRODUCCIÓN"; btn.className = "btn-confirm"; btn.style.display="block"; document.querySelectorAll('input, .obs-box').forEach(i => i.classList.remove('locked')); }
+        }
+        cambio = false;
+    }
+
+    function abrirPop() {
+        const fStr = document.getElementById('fechaProd').value;
+        const fFormat = fStr.split('-').reverse().join('/');
+        const resDiv = document.getElementById('resumenCarga');
+        resDiv.innerHTML = "";
+        let listaHtml = "<strong>Resumen:</strong><br>";
+        let tieneCarga = false;
+        todos.forEach(a => {
+            let val = parseFloat(document.getElementById(`v-${a.id}`).value) || 0;
+            if(val > 0) { listaHtml += `• ${a.n}: ${val}<br>`; tieneCarga = true; }
+        });
+        if(!tieneCarga) listaHtml = "No hay cantidades cargadas.";
+        resDiv.innerHTML = listaHtml;
+
+        if(esFinde(fStr)) {
+            document.getElementById('modalTxt').innerText = `Estás por cargar producción de un día de fin de semana, ¿estás seguro Fabi?`;
+            document.getElementById('modalBtns').innerHTML = `<button onclick="guardarTodo()" style="background:#d35400;color:white;padding:10px 20px;">SÍ, ESTOY SEGURO</button><button onclick="cerrarPop()" style="background:#6c757d;color:white;padding:10px 20px;">NO, CANCELAR</button>`;
+        } else {
+            document.getElementById('modalTxt').innerText = esAdmin ? `¿Guardar cambios del día ${fFormat}?` : `¿Seguro confirmás la producción del día ${fFormat}, Fabi?`;
+            document.getElementById('modalBtns').innerHTML = `<button onclick="guardarTodo()" style="background:#003366;color:white;padding:10px 20px;">SÍ, CONFIRMAR</button><button onclick="cerrarPop()" style="background:#6c757d;color:white;padding:10px 20px;">NO</button>`;
+        }
+        document.getElementById('customModal').style.display = 'block';
+    }
+
+    function guardarTodo() {
+        const f = document.getElementById('fechaProd').value;
+        let data = {};
+        todos.forEach(a => {
+            data[a.id] = { v: parseFloat(document.getElementById(`v-${a.id}`).value) || 0, o: document.getElementById(`o-${a.id}`).value, t: new Date().toLocaleString() };
+        });
+        db.datos[f] = { data, lock: true };
+        localStorage.setItem('fabricamas_v37', JSON.stringify(db));
+        actualizarTextoBackup();
+        descargarBackupSilencioso();
+        cerrarPop(); cargar(); refrescarTags();
+    }
+
+    function actualizarTextoBackup() {
+        const backupStr = btoa(unescape(encodeURIComponent(JSON.stringify(db))));
+        document.getElementById('textoBackup').value = backupStr;
+    }
+
+    function descargarBackupSilencioso() {
+        const backupStr = document.getElementById('textoBackup').value;
+        const blob = new Blob([backupStr], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'BACKUP_SISTEMA_FABRICAMAS.txt'; 
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+    function restaurarMes() {
+        const backupStr = prompt("Pegá acá el código de backup:");
+        if (!backupStr) return;
+        const mesARestaurar = prompt("¿Qué mes querés restaurar? (Formato AAAA-MM, ej: 2024-03)");
+        if (!mesARestaurar) return;
+
+        try {
+            const decodedData = JSON.parse(decodeURIComponent(escape(atob(backupStr))));
+            let contador = 0;
+            Object.keys(decodedData.datos).forEach(f => {
+                if(f.startsWith(mesARestaurar)) {
+                    db.datos[f] = decodedData.datos[f];
+                    contador++;
+                }
+            });
+            if(contador > 0) {
+                localStorage.setItem('fabricamas_v37', JSON.stringify(db));
+                alert(`¡Éxito! Se restauraron ${contador} días del mes ${mesARestaurar}.`);
+                location.reload();
+            } else {
+                alert("No se encontraron datos para ese mes.");
+            }
+        } catch (e) {
+            alert("Error: El código de backup no es válido.");
+        }
+    }
+
+    document.getElementById('fechaProd').onchange = function() {
+        const n = this.value; 
+        const hoy = new Date().toISOString().split('T')[0];
+        if(n > hoy && !esAdmin) { alert("No podés cargar a futuro."); this.value = fAct; return; }
+        if(esFinde(n)) {
+            if(!confirm("Estás por cargar producción de un día de fin de semana, ¿estás seguro Fabi?")) {
+                this.value = fAct; return;
+            }
+        }
+        if(cambio && !esAdmin) {
+            const temp = fAct; this.value = fAct;
+            document.getElementById('modalTxt').innerText = `Antes de cambiar, ¿confirmás la producción de ${temp.split('-').reverse().join('/')}, Fabi?`;
+            document.getElementById('modalBtns').innerHTML = `<button onclick="guardarTodo(); saltar('${n}')" style="background:#003366;color:white;padding:10px;">SÍ</button><button onclick="cambio=false; saltar('${n}')" style="background:#d93025;color:white;padding:10px;">DESCARTAR</button><button onclick="cerrarPop()" style="background:#6c757d;color:white;padding:10px;">CANCELAR</button>`;
+            document.getElementById('customModal').style.display = 'block';
+        } else { fAct = n; cargar(); }
+    };
+
+    function saltar(f) { fAct = f; document.getElementById('fechaProd').value = f; cerrarPop(); cargar(); }
+    function cerrarPop() { document.getElementById('customModal').style.display = 'none'; }
+    function togg(id) { const e = document.getElementById(`o-${id}`); e.style.display = e.style.display === 'block' ? 'none' : 'block'; }
+    
+    function refrescarTags() {
+        const hoy = new Date();
+        const sesentaDiasAtras = new Date();
+        sesentaDiasAtras.setDate(hoy.getDate() - 60);
+
+        const d = Object.keys(db.datos)
+            .filter(f => {
+                const fechaDia = new Date(f + "T12:00:00");
+                return db.datos[f].lock && fechaDia >= sesentaDiasAtras;
+            })
+            .sort();
+
+        document.getElementById('tags').innerHTML = d.map(x => x.split('-').reverse().slice(0,2).join('/')).join(' - ');
+    }
+
+    function mostrarLoginAdmin() { document.getElementById('loginAdmin').style.display = 'block'; document.getElementById('passAdmin').value = ""; document.getElementById('passAdmin').focus(); }
+    function cerrarLoginAdmin() { document.getElementById('loginAdmin').style.display = 'none'; }
+    function togglePass() { const p = document.getElementById('passAdmin'); p.type = document.getElementById('verPass').checked ? "text" : "password"; }
+    function validarAcceso() {
+        const p = document.getElementById('passAdmin').value;
+        if(p === CLAVE) { esAdmin = true; document.getElementById('panelAdmin').style.display = 'block'; cerrarLoginAdmin(); cargar(); } 
+        else { db.fallos.push({fecha: new Date().toLocaleString(), intento: p || "VACÍO"}); localStorage.setItem('fabricamas_v37', JSON.stringify(db)); alert("Clave incorrecta"); document.getElementById('passAdmin').value = ""; }
+    }
+    document.getElementById('passAdmin').addEventListener("keyup", function(event) { if (event.key === "Enter") { validarAcceso(); } });
+    function cerrarAdmin() { esAdmin = false; document.getElementById('panelAdmin').style.display = 'none'; cargar(); }
+
+    function exportarExcelFinal() {
+        const m = document.getElementById('mesSel').value;
+        if(!m) return alert("Seleccioná un mes.");
+        let xml = `<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?>
+        <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" xmlns:html="http://www.w3.org/TR/REC-html40">
+        <Styles>
+            <Style ss:ID="Header"><Font ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#003366" ss:Pattern="Solid"/><Alignment ss:Horizontal="Center"/><Borders><Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/></Borders></Style>
+            <Style ss:ID="resp"><Interior ss:Color="#FFCC80" ss:Pattern="Solid"/><Borders><Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/></Borders></Style>
+            <Style ss:ID="parr"><Interior ss:Color="#90CAF9" ss:Pattern="Solid"/><Borders><Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/></Borders></Style>
+            <Style ss:ID="esca"><Interior ss:Color="#A5D6A7" ss:Pattern="Solid"/><Borders><Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/></Borders></Style>
+            <Style ss:ID="Normal"><Borders><Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/><Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/></Borders></Style>
+        </Styles>
+        <Worksheet ss:Name="Resumen mensual"><Table ss:DefaultColumnWidth="150"><Column ss:Width="250"/><Column ss:Width="100"/><Row><Cell ss:StyleID="Header"><Data ss:Type="String">Artículo</Data></Cell><Cell ss:StyleID="Header"><Data ss:Type="String">Total Producido</Data></Cell></Row>`;
+        todos.forEach(a => {
+            let total = 0;
+            Object.keys(db.datos).forEach(f => { if(f.startsWith(m)) total += (db.datos[f].data[a.id]?.v || 0); });
+            xml += `<Row><Cell ss:StyleID="${a.c}"><Data ss:Type="String">${a.n}</Data></Cell><Cell ss:StyleID="${a.c}"><Data ss:Type="Number">${total}</Data></Cell></Row>`;
+        });
+        xml += `</Table></Worksheet><Worksheet ss:Name="Fabi"><Table ss:DefaultColumnWidth="120"><Column ss:Width="100"/><Column ss:Width="200"/><Column ss:Width="80"/><Column ss:Width="250"/><Column ss:Width="150"/><Row><Cell ss:StyleID="Header"><Data ss:Type="String">Fecha</Data></Cell><Cell ss:StyleID="Header"><Data ss:Type="String">Artículo</Data></Cell><Cell ss:StyleID="Header"><Data ss:Type="String">Cantidad</Data></Cell><Cell ss:StyleID="Header"><Data ss:Type="String">Observaciones</Data></Cell><Cell ss:StyleID="Header"><Data ss:Type="String">Fecha y Hora Carga</Data></Cell></Row>`;
+        Object.keys(db.datos).sort().forEach(f => {
+            if(f.startsWith(m)) {
+                let rd = db.datos[f].data; let cargado = false;
+                todos.forEach(a => {
+                    let v = rd[a.id]?.v || 0;
+                    if(v > 0 || rd[a.id]?.o) {
+                        xml += `<Row><Cell ss:StyleID="${a.c}"><Data ss:Type="String">${f.split('-').reverse().join('/')}</Data></Cell><Cell ss:StyleID="${a.c}"><Data ss:Type="String">${a.n}</Data></Cell><Cell ss:StyleID="${a.c}"><Data ss:Type="Number">${v}</Data></Cell><Cell ss:StyleID="${a.c}"><Data ss:Type="String">${rd[a.id].o || ""}</Data></Cell><Cell ss:StyleID="${a.c}"><Data ss:Type="String">${rd[a.id].t || ""}</Data></Cell></Row>`;
+                        cargado = true;
+                    }
+                });
+                if(cargado) xml += `<Row></Row>`;
+            }
+        });
+        xml += `</Table></Worksheet><Worksheet ss:Name="Intento de hurtos"><Table ss:DefaultColumnWidth="200"><Row><Cell ss:StyleID="Header"><Data ss:Type="String">Fecha y Hora</Data></Cell><Cell ss:StyleID="Header"><Data ss:Type="String">Clave Intentada</Data></Cell></Row>`;
+        db.fallos.forEach(x => { xml += `<Row><Cell ss:StyleID="Normal"><Data ss:Type="String">${x.fecha}</Data></Cell><Cell ss:StyleID="Normal"><Data ss:Type="String">${x.intento}</Data></Cell></Row>`; });
+        xml += `</Table></Worksheet></Workbook>`;
+        const blob = new Blob([xml], { type: 'application/vnd.ms-excel' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = `Reporte_${m}.xls`; a.click();
+    }
+
+    function borrarMes() {
+        const m = document.getElementById('mesSel').value;
+        if(!m) return alert("Seleccioná un mes.");
+        if(confirm(`¿Estás seguro de borrar mes ${m}?`)) {
+            if(confirm("ACCIÓN PERMANENTE. ¿Borrar?")) {
+                Object.keys(db.datos).forEach(f => { if(f.startsWith(m)) delete db.datos[f]; });
+                localStorage.setItem('fabricamas_v37', JSON.stringify(db));
+                location.reload();
+            }
+        }
+    }
+    init();
+</script>
+</body>
+</html>
