@@ -3,9 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="manifest.json">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Producción Fabricamas</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #f0f2f5; color: #1c1e21; }
@@ -98,7 +95,11 @@
         <hr>
         <label style="font-size: 0.8em;">Copia de Seguridad:</label>
         <textarea id="textoBackup" class="area-backup" readonly onclick="this.select(); document.execCommand('copy'); alert('¡Copiado!');"></textarea>
-        <button onclick="restaurarMes()" style="background:#5d4037; color:white; width:90%;">RESTAURAR MES DESDE BACKUP</button>
+        <button onclick="restaurarMes()" style="background:#5d4037; color:white; width:90%; margin-bottom:10px;">RESTAURAR MES DESDE BACKUP (Pegar)</button>
+        <hr>
+        <label style="font-size: 0.8em;">O cargar archivo de backup:</label>
+        <input type="file" id="fileBackup" accept=".txt" style="width: 90%; padding: 10px; margin-bottom: 10px;">
+        <button onclick="restaurarDesdeArchivo()" style="background:#5d4037; color:white; width:90%; margin-bottom:10px;">RESTAURAR DESDE ARCHIVO</button>
         <hr>
         <button onclick="cerrarAdmin()" style="background:#6c757d; color:white; width:90%; margin-top:10px;">Cerrar Panel</button>
     </div>
@@ -113,13 +114,26 @@
 </div>
 
 <script>
+    // Bloqueo botón atrás
     history.pushState(null, null, location.href);
     window.addEventListener('popstate', function() {
         history.pushState(null, null, location.href);
     });
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-    }
+
+    // Recordatorio jueves
+    (function() {
+        const hoy = new Date();
+        if (hoy.getDay() === 4) { // 4 = jueves
+            const clave = 'recordatorio_jueves_' + hoy.toISOString().split('T')[0];
+            if (!localStorage.getItem(clave)) {
+                setTimeout(function() {
+                    alert('📌 Recordatorio: Hoy es jueves. ¡Enchufar la tablet para cargarla!');
+                    localStorage.setItem(clave, '1');
+                }, 500);
+            }
+        }
+    })();
+
     const CLAVE = "1614";
     const respItems = ["RESPALDOS 1P","Cabeceras 1P","Pieceras 1P","RESPALDOS 1½","Cabeceras 1½","Pieceras 1½","RESPALDOS 1,30","Cabeceras 1,30","Pieceras 1,30","RESPALDOS 2P","Cabeceras 2P","Pieceras 2P ","RESPALDOS S/P","RESPALDOS (3)","RESPALDOS S/P 1½","RESPALDOS DIVANCITO 0,40","RESPALDOS DIVAN ECO 0,60 ","RESPALDOS NIDO ECO 0,80","RESPALDOS OTOMANA 1P","RESPALDOS OTOMANA 1½","RESPALDOS OTOMANA 2P","RESPALDOS 1P GRIEGA","RESPALDOS NIDO GRIEGA","RESPALDOS DIVAN GRIEGA","RESPALDOS 2P GRIEGA","RESPALDOS S/P GRIEGA","RESPALDOS TABLITA 1P","RESPALDOS (1,60X2,00)","RESPALDOS (2,00X2,00)","MONTESSORI TIPI","MONTESSORI CASITA","MONTESSORI CASITA S/P","TATAMI","CAMASCOTA"];
     const parrItems = ["PARRILLAS 1P (3)","PARRILLAS 1P (4)","PARRILLAS 1P (¾ X 3\")","PARRILLAS 1P (¾ X 4\")","PARRILLAS 1P 2m (¾ X 3\")","PARRILLAS 1P 2m (¾ X 4\")","PARRILLAS CARRITO (3)","PARRILLAS CARRITO (4)","PARRILLAS 1P 1 PULGADA (3)","PARRILLAS 1P 1 PULGADA (4)","PARRILLAS 1½ (3)","PARRILLAS 1½ (4)","PARRILLAS 1½ (¾ X 3\")","PARRILLAS 1½ (¾ X 4\")","PARRILLAS 1,30 (3)","PARRILLAS 1,30 (4)","PARRILLAS 2P (3)","PARRILLAS 2P (4)","PARRILLAS 2P (¾ X 3\")","PARRILLAS 2P (¾ X 4\")","PARRILLAS (1,60/2,00)","PARRILLAS (2,00/2,00)","PRACTICAMA","CAJON"];
@@ -253,6 +267,40 @@
             alert("Error: El código de backup no es válido.");
         }
     }
+
+    function restaurarDesdeArchivo() {
+        const archivo = document.getElementById('fileBackup').files[0];
+        if (!archivo) return alert("Seleccioná un archivo primero.");
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const backupStr = e.target.result.trim();
+            const mesARestaurar = prompt("¿Qué mes querés restaurar? (Formato AAAA-MM, ej: 2024-03)");
+            if (!mesARestaurar) return;
+            
+            try {
+                const decodedData = JSON.parse(decodeURIComponent(escape(atob(backupStr))));
+                let contador = 0;
+                Object.keys(decodedData.datos).forEach(f => {
+                    if(f.startsWith(mesARestaurar)) {
+                        db.datos[f] = decodedData.datos[f];
+                        contador++;
+                    }
+                });
+                if(contador > 0) {
+                    localStorage.setItem('fabricamas_v37', JSON.stringify(db));
+                    alert(`¡Éxito! Se restauraron ${contador} días del mes ${mesARestaurar}.`);
+                    location.reload();
+                } else {
+                    alert("No se encontraron datos para ese mes.");
+                }
+            } catch (e) {
+                alert("Error: El archivo no es válido.");
+            }
+        };
+        reader.readAsText(archivo);
+    }
+
 
     document.getElementById('fechaProd').onchange = function() {
         const n = this.value; 
