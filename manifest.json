@@ -2,7 +2,7 @@
   "name": "Producción Fabricamas",
   "short_name": "Producción",
   "start_url": "/produccion/produccion.html",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "#f0f2f5",
   "theme_color": "#003366",
   "icons": [
