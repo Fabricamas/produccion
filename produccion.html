@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Producción Fabricamas</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #f0f2f5; color: #1c1e21; }
@@ -110,12 +113,10 @@
 </div>
 
 <script>
-    // Bloqueo de navegación - el botón atrás no puede salir de esta página
     history.pushState(null, null, location.href);
     window.addEventListener('popstate', function() {
         history.pushState(null, null, location.href);
     });
-
     const CLAVE = "1614";
     const respItems = ["RESPALDOS 1P","Cabeceras 1P","Pieceras 1P","RESPALDOS 1½","Cabeceras 1½","Pieceras 1½","RESPALDOS 1,30","Cabeceras 1,30","Pieceras 1,30","RESPALDOS 2P","Cabeceras 2P","Pieceras 2P ","RESPALDOS S/P","RESPALDOS (3)","RESPALDOS S/P 1½","RESPALDOS DIVANCITO 0,40","RESPALDOS DIVAN ECO 0,60 ","RESPALDOS NIDO ECO 0,80","RESPALDOS OTOMANA 1P","RESPALDOS OTOMANA 1½","RESPALDOS OTOMANA 2P","RESPALDOS 1P GRIEGA","RESPALDOS NIDO GRIEGA","RESPALDOS DIVAN GRIEGA","RESPALDOS 2P GRIEGA","RESPALDOS S/P GRIEGA","RESPALDOS TABLITA 1P","RESPALDOS (1,60X2,00)","RESPALDOS (2,00X2,00)","MONTESSORI TIPI","MONTESSORI CASITA","MONTESSORI CASITA S/P","TATAMI","CAMASCOTA"];
     const parrItems = ["PARRILLAS 1P (3)","PARRILLAS 1P (4)","PARRILLAS 1P (¾ X 3\")","PARRILLAS 1P (¾ X 4\")","PARRILLAS 1P 2m (¾ X 3\")","PARRILLAS 1P 2m (¾ X 4\")","PARRILLAS CARRITO (3)","PARRILLAS CARRITO (4)","PARRILLAS 1P 1 PULGADA (3)","PARRILLAS 1P 1 PULGADA (4)","PARRILLAS 1½ (3)","PARRILLAS 1½ (4)","PARRILLAS 1½ (¾ X 3\")","PARRILLAS 1½ (¾ X 4\")","PARRILLAS 1,30 (3)","PARRILLAS 1,30 (4)","PARRILLAS 2P (3)","PARRILLAS 2P (4)","PARRILLAS 2P (¾ X 3\")","PARRILLAS 2P (¾ X 4\")","PARRILLAS (1,60/2,00)","PARRILLAS (2,00/2,00)","PRACTICAMA","CAJON"];
