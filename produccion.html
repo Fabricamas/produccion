@@ -208,6 +208,7 @@
         localStorage.setItem('fabricamas_v37', JSON.stringify(db));
         actualizarTextoBackup();
         descargarBackupSilencioso();
+        enviarASheets();
         cerrarPop(); cargar(); refrescarTags();
     }
 
@@ -363,6 +364,57 @@
             }
         }
     }
+
+    const SHEETS_URL = "https://script.google.com/macros/s/AKfycbxkA37GcgUtKH5syQcd75MTp2Dq2KbhwNQvLKBRlRVcKNbP4okeWPB-E4DUKSBxZ0ueIA/exec";
+
+    function enviarASheets() {
+        try {
+            // Determinar mes actual de los datos (mes de la fecha activa)
+            const mes = fAct.substring(0, 7); // "2026-04"
+
+            // Construir resumen mensual (igual que exportarExcelFinal)
+            const resumen = [];
+            todos.forEach(a => {
+                let total = 0;
+                Object.keys(db.datos).forEach(f => {
+                    if(f.startsWith(mes)) total += (db.datos[f].data[a.id]?.v || 0);
+                });
+                resumen.push([a.n, total]);
+            });
+
+            // Construir filas detalle (igual que exportarExcelFinal)
+            const filas = [];
+            Object.keys(db.datos).sort().forEach(f => {
+                if(f.startsWith(mes)) {
+                    let rd = db.datos[f].data;
+                    todos.forEach(a => {
+                        let v = rd[a.id]?.v || 0;
+                        if(v > 0 || rd[a.id]?.o) {
+                            filas.push([
+                                f.split('-').reverse().join('/'),
+                                a.n,
+                                v,
+                                rd[a.id].o || "",
+                                rd[a.id].t || ""
+                            ]);
+                        }
+                    });
+                }
+            });
+
+            fetch(SHEETS_URL, {
+                method: "POST",
+                body: JSON.stringify({ mes, filas, resumen }),
+                headers: { "Content-Type": "text/plain" }
+            }).then(r => r.json()).then(data => {
+                if(!data.ok) console.error("Error Sheets:", data.error);
+            }).catch(err => console.error("Error enviando a Sheets:", err));
+
+        } catch(err) {
+            console.error("Error en enviarASheets:", err);
+        }
+    }
+
     init();
 </script>
 </body>
