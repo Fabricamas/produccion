@@ -379,7 +379,7 @@
                 Object.keys(db.datos).forEach(f => {
                     if(f.startsWith(mes)) total += (db.datos[f].data[a.id]?.v || 0);
                 });
-                resumen.push([a.n, total]);
+                resumen.push([a.n, total, a.c]);
             });
 
             // Construir filas detalle (igual que exportarExcelFinal)
@@ -395,7 +395,8 @@
                                 a.n,
                                 v,
                                 rd[a.id].o || "",
-                                rd[a.id].t || ""
+                                rd[a.id].t || "",
+                                a.c
                             ]);
                         }
                     });
