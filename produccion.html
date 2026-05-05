@@ -222,7 +222,7 @@
         const blob = new Blob([backupStr], { type: 'text/plain' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = 'BACKUP_SISTEMA_FABRICAMAS.txt'; 
+        a.download = 'BACKUP_FABRICAMAS_' + new Date().toISOString().replace(/[:.]/g, '-').slice(0,19) + '.txt'; 
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
